@@ -15,13 +15,45 @@ V1
 
 由于文章的版权归属于作者，在作者上传稿件时，需要作者选择其稿件的授权方式。「原本」支持免费的CC转载协议和付费的商业转载协议。为了方便客户集成，「原本」提供了SDK帮客户实现选择协议的界面流程。
 
-## OAuth连接流程
+## OAuth授权流程
 
+「原本」支持使用国际通用的OAuth2.0协议完成客户系统和「原本」的连接。
+作者在客户平台使用原本的功能前，首先需要将作者在「原本」的账号与客户平台的账号进行绑定，同时授权客户平台代表作者在「原本」发布文章，授权流程的顺序图如下：
 
+![OAuth授权顺序图](https://yb-public.oss-cn-shanghai.aliyuncs.com/openapi-docs/platfrom-oauth-workflow-authorize.png)
+
+在作者编辑文章时，可通过原本SDK提供的[原本协议编辑器](https://github.com/yuanbenio/yb-license-editor)来选择想要的转载授权协议，客户平台需要在保存用户文章的同时保存用户选择的授权协议。
+
+当用户点击发布时，客户平台将用户文章和授权协议，以及用户对应的Access Token一起发送到「原本」进行文章认证，「原本」会返回认证后的徽章和授权说明文字，客户平台需将徽章文字和原文章一同保存起来,并在文章展示页面一起拼接展示出来。
+
+![OAuth发布顺序图](https://yb-public.oss-cn-shanghai.aliyuncs.com/openapi-docs/platfrom-oauth-workflow-publish.png)
+
+由于发送文章到原本认证是一个网络请求，同时原本链的区块构建需要一些时间，为了减少用户点击发布后的等待时间，建议客户系统以异步请求方式实现认证，保存文章后发送一个消息通知给异步队列，由异步队列完成文章的认证和徽章的保存。在文章的展示页面判断只有当徽章已经成功生成后，才显示徽章内容。
 
 # API说明
 
 ## OAuth授权接口
+[GET] https://openapi.yuanben.io/oauth/authorize
+
+### 参数列表
+在用户点击绑定「原本」账号后，客户系统将浏览器重定向到这个API地址，作者在此页面完成账号创建和授权操作。
+
+| 参数名称  | 参数类型 | 是否必填 | 数据类型 | 参数说明 |
+| --- | --- | --- | --- | --- |
+| client_id | GET | 是 | 字符串 | 客户系统在「原本」的id |
+| redirect_uri | GET | 是 | 字符串 | url编码过的回调地址，完成授权后，「原本」会将浏览器重定向到此地址，同时携带授权token |
+| response_type | GET | 是 | 字符串 | 固定填写code |
+| scope | GET | 是 | 字符串 | 需要获取的权限，目前固定填空值 |
+
+### 返回值
+
+用户完成授权后，「原本」会重定向到redirect_uri指定的地址，同时带上授权
+
+```
+http://www.redirect_uri.com/callback?code=xxxxxx
+```
+
+## OAuth获取Access Token接口
 
 
 
