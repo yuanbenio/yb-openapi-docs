@@ -43,6 +43,7 @@ V1
 | 参数名称  | 参数类型 | 是否必填 | 数据类型 | 参数说明 |
 | --- | --- | --- | --- | --- |
 | articles | POST | 是 | 数组 |每一条为一篇文章 |
+| articles[*][client_id] | POST | 是 | 整数 | 文章 ID |
 | articles[*][author] | POST | 是 | 数组 | 文章的作者信息 |
 | articles[*][author][email] | POST | 是 | 字符串 | 作者的邮箱 |
 | articles[*][author][pseudonym] | POST | 是 | 字符串 | 作者的笔名 |
@@ -63,9 +64,7 @@ V1
 
 | 参数名称 | 参数说明 |
 | --- | --- |
-| title | 文章标题 |
-| content | 文章内容，在原始文章内容后增加了授权徽章图片和版权说明文字 |
-| outline | 文章摘要 |
+| client_id| 文章ID|
 | public_key | 原创认证时使用的公钥（私钥加密后已邮件的形式发送到媒体机构注册时使用的邮箱）
 | signature | 原创认证的数字签名
 | hash | 文章哈希值
@@ -73,6 +72,7 @@ V1
 | yuanben_id | 完整原本DNA
 | short_id | 原本DNA
 | url | 文章在原本的详情页地址
+| badge_html| 授权徽章的 html
 | badge_url | 授权徽章图片的URL
 
 ### 请求示例
@@ -80,6 +80,7 @@ V1
 curl -X POST \
   https://openapi.yuanben.io/v1/platform/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
+-F 'articles[0][client_id]=5' \
   -F 'articles[0][author][email]=l**@163.com
   -F 'articles[0][author][pseudonym]=一个洋葱
   -F 'articles[0][title]=测试文章' \
@@ -96,7 +97,7 @@ curl -X POST \
   https://openapi.yuanben.io/v1/platform/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
   -H 'content-type: application/json' \
-  -d '{"articles":[{"author":{"email":"l**@163.com","pseudonym":"一个洋葱"},"title":"测试文章","content":"<p>一篇测试文章</p>","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
+  -d '{"articles":[{"client_id": 5, "author":{"email":"l**@163.com","pseudonym":"一个洋葱"},"title":"测试文章","content":"<p>一篇测试文章</p>","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
 ```
 
 返回值
@@ -104,29 +105,22 @@ curl -X POST \
 ```
 [
   {
-    "user_id": 3,
-    "author_name": "一个洋葱",
-    "title": "测试文章",
-    "license": {
-      "type": "cc",
-      "content": {
-        "adaptation": "sa",
-        "commercial": "n"
-      }
+    "status": {
+      "success": true,
+      "message": "ok"
     },
-    "content": "<p>一篇测试文章</p><p style=\"margin-top:28px;margin-bottom:0;height:32px\"><img src=\"http://yb-img-staging.oss-cn-shanghai.aliyuncs.com/badges/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I.png\" /></p><p style=\"font-size:12px;color:#787878;margin-top:4px\">本文经<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">「原本」</a>原创认证，作者<a href=\"https://yuanben.io/author/3\" style=\"text-decoration:none;color:#007f69\">一个洋葱</a>，访问<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">yuanben.io</a>查询【<a href=\"http://lg.local.yuanben.site/article/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">4GD4OT02</a>】获取授权信息。",
-    "outline": "一篇测试文章",
-    "created_at": 1491908110,
-    "status": 3,
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrhRNfnh9HAQDTIKGEm6\n1avmtvrJpgWxrlZdW9lTvKSusWJ2YJxHrLmJPXpGmTyZAXjwR13LCe4cZth2Ca2e\nDv/1s/3+2igxQM62rnfVUTqFaW6b7Zmk0M3ht5ncDUTRMZTV8zBmma74UjssPSS/\nfIhc1e75pZ5hIhsOew2tzN7ab3gSpghKunHmOI3KzONlu1LghO1XxfAzskVSJ2uX\nWXIuvzY57q4jPxBv//B2oH1cOk8N4odojXxCvjNuigyXlvcN/wsJWXNLu/5lX1vL\n820XlFosdL5EhO+J4D30ZfOzeIzUj1pPWxCQkb+OMxH865qpGwNMWSkOXp8k5Fie\nXQIDAQAB\n-----END PUBLIC KEY-----\n",
-    "signature": "TL9TSUWBpBKAmPxuxwG//pSkrXid1CSg2Lm3NgA6LWDm4b7v4Zar7rP3+mFYB5Obn1WCZ5Kphck1dnxBICfI4t0sl9VwE0ir1GCmOctv+njnVhVkGuvGCNRqvwE7SCZ6reOz3EbPPNU8pSAunrlSdzzg+jI3hB6z1fJVbcoBrfttTvkPFZuFEoGiFZ9vlk+V6WxU24kxtEIZrDwKbkaOghVC/tqcesVZWVabPc4GWeQsZH+gLoAuJ6mzPyTfV5y/2G1hevR9huRuLi2AVM1kq/3SvWP51h7qwaCKxwuGIFBSSmFNr7/h9m5bW6R1+TOtbsuzpIczp96vfAPd1v10bw==",
-    "hash": "3K7Q2KTGYP0XFLOLA5IMY607TM27OIG5VEIWQZLFA8VN4V94E5",
-    "block_hash": "K8S6YARWZMABPE7S03Z5W8FM67WB904UH4OYPKYK4X5V5EUBZ",
-    "yuanben_id": "4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I",
-    "short_id": "4GD4OT02",
-    "id": 2714,
-    "url": "https://yuanben.io/article/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I",
-    "badge_url": "https://yb-img.oss-cn-shanghai.aliyuncs.com/badges/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I.png"
+    "article": {
+      "client_id": 1,
+      "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsZhLKMRGp10UXavQwmKM\n4Q25JX5aYiswhKG50/hbq7MZ7PrcpVgx1wVAnhG6r50B5SlWopeL8SQtFE6CzEk7\nD2tTjScZqw4yq75sHReOKqt01rFa63/ke1nShZuk4rekeENpWLRjwztGVv5QbOx7\nUbuEJqfibFugeaWCW2t4y4EZIKoGTWV++cMbk8/qIGqAHmj40Vg4/k7w2Co5K4+w\nz+puJU/bR2/tIf5tnOUtmZF/i/iGGPmwNSa+NJANa1EqyTLqYMTQJugZNBdEkofp\nwx5Uzr5fa+4rn7dr1LmbV0CDoP6/MBq96a+5ULrTrdZQwe6alsbOaaAxBvV8wuuC\nPwIDAQAB\n-----END PUBLIC KEY-----\n",
+      "signature": "rLKnrpHp4C/37sWTWeMKElBk6yJC31/0KFL7H4dwi3t56eIoDmLy/bY549wA8x6b3quc9x8dCP6aHZKs8Qfrk24cTunsTgh8zdp0S3Kx/XaMh0torFkNKGjEQGyTvfrNbWn+84DspXXQ28m2os7uYo8ir/fSoRay3/6tUKrbTdX+/okHouAD9UqorFdsXURwS4LpTyJiJr0pg+pRVnxkX+/isWHw/3ZZDfq+Rah4w8EOHbJRbAekC0taa6SxBxjvZfnpIFZA2VkxBnR94BqBHPmKd+LGLCoGApVBHa8ehGYJHDIJo34Q23u0UHSTVRACOOxWumrzgaVMuDqzWdtBVg==",
+      "hash": "14BWY2WLX50R4R86H3FZQH4HQLMA9G0OZJBDIF4MQOY9SL3ONM",
+      "block_hash": "4CFVLGPMKC7OE7FNFM9OEPFH71UPIVOP8TQBPN2M716GJAUH1X",
+      "yuanben_id": "3LGUMDDAIB0R3I1ZIG7QQJU2HQMKDRT1UCFJKDOBY7BMQ6UYI5",
+      "short_id": "3LGUMDDA",
+      "url": "http://www.work.io/article/3LGUMDDAIB0R3I1ZIG7QQJU2HQMKDRT1UCFJKDOBY7BMQ6UYI5",
+      "badge_html": "<p style=\"margin-top:28px;margin-bottom:0;height:32px;text-align:left\"><img src=\"http://img.yuanben.org/badges/3LGUMDDAIB0R3I1ZIG7QQJU2HQMKDRT1UCFJKDOBY7BMQ6UYI5.png\" style=\"margin:0!important\" /></p><p style=\"font-size:12px;color:#787878;margin-top:4px\">本文经<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">「原本」</a>原创认证，作者<a href=\"https://yuanben.io/author/1424\" style=\"text-decoration:none;color:#007f69\">习近平</a>，访问<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">yuanben.io</a>查询【<a href=\"http://www.work.io/article/3LGUMDDAIB0R3I1ZIG7QQJU2HQMKDRT1UCFJKDOBY7BMQ6UYI5\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">3LGUMDDA</a>】获取授权信息。",
+      "badge_url": "http://img.yuanben.org/badges/3LGUMDDAIB0R3I1ZIG7QQJU2HQMKDRT1UCFJKDOBY7BMQ6UYI5.png"
+    }
   }
 ]
 ```

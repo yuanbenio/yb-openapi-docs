@@ -36,7 +36,8 @@ V1
 | 参数名称  | 参数类型 | 是否必填 | 数据类型 | 参数说明 |
 | --- | --- | --- | --- | --- |
 | articles | POST | 是 | 数组 |每一条为一篇文章 |
-| articles[*][title] | POST | 是 | 字符串 | 文章标题
+| articles[*][client_id] | POST | 是 | 整型 | 文章 ID
+| articles[*][title] | POST | 是 | 字符串 | 文章标题|
 | articles[*][content] | POST | 是 | HTML字符串 | 文章内容，如果文章内容和其他用户的已发布文章高度相似，则接口会返回错误 |
 | articles[*][license] | POST | 是 | 数组 |文章授权协议，包括CC协议和商业协议两种
 | articles[*][license][type] | POST | 是 | 字符串 | 授权类型，值为'cc'或者'cm'，分别对应CC协议和商业协议 |
@@ -70,6 +71,7 @@ V1
 curl -X POST \
   https://openapi.yuanben.io/v1/media/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
+ -F 'articles[0][client_id]=文章ID' \
   -F 'articles[0][title]=测试文章' \
   -F 'articles[0][content]=<p>一篇测试文章</p>' \
   -F 'articles[0][license][type]=cc' \
@@ -84,7 +86,7 @@ curl -X POST \
   https://openapi.yuanben.io/v1/media/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
   -H 'content-type: application/json' \
-  -d '{"articles":[{"title":"测试文章","content":"<p>一篇测试文章</p>","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
+  -d '{"client_id": 5, "articles":[{"title":"测试文章","content":"<p>一篇测试文章</p>","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
 ```
 
 返回值
@@ -92,29 +94,31 @@ curl -X POST \
 ```
 [
   {
-    "user_id": 3,
-    "author_name": "一个洋葱",
-    "title": "测试文章",
-    "license": {
-      "type": "cc",
-      "content": {
-        "adaptation": "sa",
-        "commercial": "n"
-      }
+    "status": {
+      "success": false,
+      "message": "文章认证失败, 该文章与其他作者文章相似度过高."
     },
-    "content": "<p>一篇测试文章</p><p style=\"margin-top:28px;margin-bottom:0;height:32px\"><img src=\"http://yb-img-staging.oss-cn-shanghai.aliyuncs.com/badges/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I.png\" /></p><p style=\"font-size:12px;color:#787878;margin-top:4px\">本文经<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">「原本」</a>原创认证，作者<a href=\"https://yuanben.io/author/3\" style=\"text-decoration:none;color:#007f69\">一个洋葱</a>，访问<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">yuanben.io</a>查询【<a href=\"http://lg.local.yuanben.site/article/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">4GD4OT02</a>】获取授权信息。",
-    "outline": "一篇测试文章",
-    "created_at": 1491908110,
-    "status": 3,
-    "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrhRNfnh9HAQDTIKGEm6\n1avmtvrJpgWxrlZdW9lTvKSusWJ2YJxHrLmJPXpGmTyZAXjwR13LCe4cZth2Ca2e\nDv/1s/3+2igxQM62rnfVUTqFaW6b7Zmk0M3ht5ncDUTRMZTV8zBmma74UjssPSS/\nfIhc1e75pZ5hIhsOew2tzN7ab3gSpghKunHmOI3KzONlu1LghO1XxfAzskVSJ2uX\nWXIuvzY57q4jPxBv//B2oH1cOk8N4odojXxCvjNuigyXlvcN/wsJWXNLu/5lX1vL\n820XlFosdL5EhO+J4D30ZfOzeIzUj1pPWxCQkb+OMxH865qpGwNMWSkOXp8k5Fie\nXQIDAQAB\n-----END PUBLIC KEY-----\n",
-    "signature": "TL9TSUWBpBKAmPxuxwG//pSkrXid1CSg2Lm3NgA6LWDm4b7v4Zar7rP3+mFYB5Obn1WCZ5Kphck1dnxBICfI4t0sl9VwE0ir1GCmOctv+njnVhVkGuvGCNRqvwE7SCZ6reOz3EbPPNU8pSAunrlSdzzg+jI3hB6z1fJVbcoBrfttTvkPFZuFEoGiFZ9vlk+V6WxU24kxtEIZrDwKbkaOghVC/tqcesVZWVabPc4GWeQsZH+gLoAuJ6mzPyTfV5y/2G1hevR9huRuLi2AVM1kq/3SvWP51h7qwaCKxwuGIFBSSmFNr7/h9m5bW6R1+TOtbsuzpIczp96vfAPd1v10bw==",
-    "hash": "3K7Q2KTGYP0XFLOLA5IMY607TM27OIG5VEIWQZLFA8VN4V94E5",
-    "block_hash": "K8S6YARWZMABPE7S03Z5W8FM67WB904UH4OYPKYK4X5V5EUBZ",
-    "yuanben_id": "4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I",
-    "short_id": "4GD4OT02",
-    "id": 2714,
-    "url": "https://yuanben.io/article/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I",
-    "badge_url": "https://yb-img.oss-cn-shanghai.aliyuncs.com/badges/4GD4OT02A9F4PDUB9AVZ629PDT74A9YFBEAYJ215IIOM5JUW5I.png"
+    "article": {
+      "client_id": 1
+    }
+  },
+  {
+    "status": {
+      "success": true,
+      "message": "ok"
+    },
+    "article": {
+      "client_id": 2,
+      "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz9VjvzZTYsODrVL/Ntml\nkdT+c0HMI1Nt+eo+Q2aaISXNLAfMoXg3HZ9/wbuWl89DfJYhaqV94TjSN/sRcYV9\nfbNTFL6XeWce7Ve3CL3iO9BezVp9pYktYjOKIo4eFRzp+O1hunq+BQ27SNsKTYGG\nyLIPfVL0G9kDwwcfTR0TXl6LSzb5p1YIucVD74CzpwllNhluTvpMMyCPrv4vv/cL\nE+0rg9KHNbUxZ3ZQDjiHhoYHOt2mDUFDKXXDN0jDNBUZ3gl0OlIK0BCNboHi9u4M\ndeOYV9V0JfgMu7zV9Te5CECfv+vH3HNEFTe6mgg+aRC11Di9czjCF2jFI2+zAHE5\n7QIDAQAB\n-----END PUBLIC KEY-----\n",
+      "signature": "X/beRt9pjmigDnAelDMvX8PILWn9QKfmhgQ0jonKNPyxK+qkuDemo2JeZlSmpJPU36s/incTmTf1wiCn/MdYa7MwhCkxpXdGndTGic7t7RnRfYgNOTRIiRQjofBmLz6bYm7eaYN6MRJWO+B5QXNOVOCGoETVnpR88SJVI1yMT9XTa4dooqLaH30ttwEo4Q9bcsefSe3fP9RXq1ED1toSV3jo2tKgAPIEKGx1EcYzJdSlv927ohQY0o8msw6dxni93sWU8r496qfJ49PhgqYtUhlTulhy4/lzdnqBRWwonWoGpV8nh3caV7NMVja73dtLwz2qLAr0t9vHNlvIgFMoRw==",
+      "hash": "6D4VQ9BLG3T64IE0OCCZ6IDS74R3D55SR8QPE7I7JFIPOZNEKE",
+      "block_hash": "4TNSM8IA0105KGQGD8HR8L7A4MLU5RS70NZZ1XGM8TEFN2IXSM",
+      "yuanben_id": "295J7IKVMTTLIH5TCWDNPFLYDGVRBNX7734PF57HDUNU9LL0D8",
+      "short_id": "295J7IKV",
+      "url": "http://www.work.io/article/295J7IKVMTTLIH5TCWDNPFLYDGVRBNX7734PF57HDUNU9LL0D8",
+      "badge_html": "<p style=\"margin-top:28px;margin-bottom:0;height:32px;text-align:left\"><img src=\"http://img.yuanben.org/badges/295J7IKVMTTLIH5TCWDNPFLYDGVRBNX7734PF57HDUNU9LL0D8.png\" style=\"margin:0!important\" /></p><p style=\"font-size:12px;color:#787878;margin-top:4px\">本文经<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">「原本」</a>原创认证，作者<a href=\"https://yuanben.io/author/12\" style=\"text-decoration:none;color:#007f69\">wang</a>，访问<a href=\"http://yuanben.io\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">yuanben.io</a>查询【<a href=\"http://www.work.io/article/295J7IKVMTTLIH5TCWDNPFLYDGVRBNX7734PF57HDUNU9LL0D8\" target=\"_blank\" style=\"text-decoration:none;color:#007f69\">295J7IKV</a>】获取授权信息。",
+      "badge_url": "http://img.yuanben.org/badges/295J7IKVMTTLIH5TCWDNPFLYDGVRBNX7734PF57HDUNU9LL0D8.png"
+    }
   }
 ]
 ```
