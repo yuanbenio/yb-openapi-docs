@@ -55,16 +55,16 @@ V1
 | 参数名称 | 参数说明 |
 | --- | --- |
 | title | 文章标题 |
-| content | 文章内容，在原始文章内容后增加了授权徽章图片和版权说明文字 |
-| outline | 文章摘要 |
-| public_key | 原创认证时使用的公钥（私钥加密后已邮件的形式发送到媒体机构注册时使用的邮箱）
-| signature | 原创认证的数字签名
-| hash | 文章哈希值
-| block_hash | 文章在原本链上的区块地址
-| yuanben_id | 完整原本DNA
-| short_id | 原本DNA
-| url | 文章在原本的详情页地址
-| badge_url | 授权徽章图片的URL
+| client_id | 发送的文章ID，原样返回 |
+| public_key | 原创认证时使用的公钥（私钥加密后已邮件的形式发送到媒体机构注册时使用的邮箱）|
+| signature | 原创认证的数字签名 |
+| hash | 文章哈希值 |
+| block_hash | 文章在原本链上的区块地址 |
+| yuanben_id | 完整原本DNA |
+| short_id | 原本DNA |
+| url | 文章在原本的详情页地址 |
+| badge_html | 授权徽章和版权说明文字 |
+| badge_url | 授权徽章图片的URL |
 
 ### 请求示例
 ```
