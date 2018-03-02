@@ -26,5 +26,5 @@ V1
 将以下代码加入每篇文章的尾部
 
 ```
-<script type="text/javascript" src="https://api.yuanben.io/badge" async defer></script>
+<script type="text/javascript" src="https://api.yuanben.io/badge"></script>
 ```
