@@ -131,3 +131,105 @@ curl -X POST \
   }
 ]
 ```
+
+
+## 图片发布接口
+[ POST ] https://openapi.yuanben.io/v1/media/images
+
+### 参数列表
+
+#### 参数同时支持form-data和json两种方式，使用json方式post时，需把Content-Type设置为application/json
+
+| 参数名称  | 参数类型 | 是否必填 | 数据类型 | 参数说明 |
+| --- | --- | --- | --- | --- |
+| images | POST | 是 | 数组 |每一条为一张图片 |
+| images[*][client_id] | POST | 是 | 整型 | 图片 ID |
+| images[*][title] | POST | 是 | 字符串 | 图片标题|
+| images[*][description] | POST | 是 | 字符串 |图片描述 |
+| images[*][tags] | POST | 是 | 数组 |图片标签 |
+| images[*][image] | POST | 是 | file/string |图片,当Content-Type为json时传图片based64后的字符串，当为form-data时传文件 |
+| images[*][license] | POST | 是 | 数组 |文章授权协议，包括CC协议和商业协议两种
+| images[*][license][type] | POST | 是 | 字符串 | 授权类型，值为'cc'或者'cm'，分别对应CC协议和商业协议 |
+| images[*][license][content] | POST | 是 | 数组 | 授权方式具体参数 |
+| images[*][license][content][adaptation] | POST | 是 | 字符串 | 是否允许演绎，对于商业协议，可选'y'或者'n'，对于CC协议，可选'y','n'或者'sa' ('sa'表示相同方式共享) |
+| images[*][license][content][commercial] | POST | cc协议必填 | 字符串 | 是否允许商业使用， 'y'或者'n' |
+| images[*][license][content][price] | POST | 商业协议必填 | 整数 | 商业协议的授权转载价格，单位为“分”
+
+### 返回值
+
+状态码：若请求成功，返回200，提交数据有误返回422
+
+返回数据为json对象
+
+| 参数名称 | 参数说明 |
+| --- | --- |
+| status | 认证状态 |
+| status.code | 认证是否成功 200为成功 |
+| status.message | 认证失败的错误消息|
+| data | 数据信息，为JSON数组，其中每一项为一张图片的信息，顺序和发送的图片顺序一致： |
+
+data中每一组的image参数是JSON Object，包含图片的详细信息，具体包含的字段有：
+
+| 参数名称 | 参数说明 |
+| --- | --- |
+| client_id | 发送的ID，原样返回 |
+| public_key | 原创认证时使用的公钥（私钥加密后已邮件的形式发送到媒体机构注册时使用的邮箱）|
+| signature | 原创认证的数字签名 |
+| content_hash | 图片哈希值 |
+| block_hash | 文章在原本链上的区块地址 |
+| yuanben_id | 完整原本DNA |
+| short_id | 原本DNA |
+| url | 图片在原本的详情页地址 |
+
+### 请求示例
+```
+curl -X POST \
+  https://openapi.yuanben.io/v1/media/images \
+  -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
+ -F 'images[0][client_id]=文章ID' \
+  -F 'images[0][title]=测试文章' \
+  -F 'images[0][description]=<p>一篇测试文章</p>' \
+  -F 'images[0][license][type]=cc' \
+  -F 'images[0][license][content][adaptation]=sa' \
+  -F 'images[0][license][content][commercial]=n'
+```
+
+或
+
+```
+curl -X POST \
+  https://openapi.yuanben.io/v1/media/images \
+  -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
+  -H 'content-type: application/json' \
+  -d '{"articles":[{"client_id": 5,"title":"测试文章","description":"一篇测试文章","image":"based64后值","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
+```
+
+返回值
+
+```
+{
+    "status": {
+        "code": 200,
+        "message": ""
+    },
+    "data": [
+        {
+            "status": {
+                "success": true,
+                "message": "ok"
+            },
+            "image": {
+                "client_id": "1",
+                "public_key": "02636d79fc7c7cc37b9cb348037eec28743d030e5d570d0d69837a3587bed31880",
+                "signature": "22bcfa7512c9426c3737b36994e30bb4c08eecfe8c50da0a0d0fd2e4cef5027310d91bafb30fc3cb255d9f543b6572db2b8a64662f487edde4b012719e039c161c",
+                "content_hash": "9d966886063e20405224c94d012e032c79446ee67b76273d095b8c3983f8807d",
+                "block_hash": null,
+                "yuanben_id": "3NI02V0ZKLHF5QIQTHEHCOMUMX5T244SJ2GYNPADF4SWJZDQHE",
+                "short_id": "3NI02V0Z",
+                "url": "http://staging.yuanben.site/image/3NI02V0ZKLHF5QIQTHEHCOMUMX5T244SJ2GYNPADF4SWJZDQHE"
+            }
+        }
+    ]
+}
+
+```
