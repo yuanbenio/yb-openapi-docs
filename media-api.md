@@ -138,7 +138,9 @@ curl -X POST \
 
 ### 参数列表
 
-#### 参数同时支持form-data和json两种方式，使用json方式post时，需把Content-Type设置为application/json
+#### 参数同时支持form-data和json两种方式，使用json方式post时，需把Content-Type设置为application/json 
+**post数据大小不可大于50MB（包含文件）**
+
 
 | 参数名称  | 参数类型 | 是否必填 | 数据类型 | 参数说明 |
 | --- | --- | --- | --- | --- |
