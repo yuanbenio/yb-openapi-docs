@@ -196,7 +196,7 @@ curl -X POST \
   https://openapi.yuanben.io/v1/media/images \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
   -H 'content-type: application/json' \
-  -d '{"articles":[{"client_id": 5,"title":"测试文章","description":"一篇测试文章","image":"based64后值","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
+  -d '{"images":[{"client_id": 5,"title":"测试文章","description":"一篇测试文章","image":"based64后值","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
 ```
 
 返回值
