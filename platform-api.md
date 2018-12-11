@@ -35,6 +35,7 @@ V1
 
 ## 文章发布接口
 [ POST ] https://openapi.yuanben.io/v1/platform/articles
+[ POST ] http://openapi.staging.yuanben.site/v1/platform/articles (测试线)
 
 ### 参数列表
 
@@ -128,6 +129,7 @@ curl -X POST \
 
 ## 图片发布接口
 [ POST ] https://openapi.yuanben.io/v1/platform/images
+[ POST ] http://openapi.staging.yuanben.site/v1/platform/images (测试线)
 
 ### 参数列表
 
