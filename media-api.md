@@ -40,6 +40,7 @@ V1
 | articles[*][client_id] | POST | 是 | 整型 | 文章 ID
 | articles[*][title] | POST | 是 | 字符串 | 文章标题|
 | articles[*][content] | POST | 是 | HTML字符串 | 文章内容，如果文章内容和其他用户的已发布文章高度相似，则接口会返回错误 |
+| articles[*][closed] | POST | 否 | 布尔型 | 文章是否对外开放，如果设置为true，文章则不对其他用户开放，默认为false |
 | articles[*][license] | POST | 是 | 数组 |文章授权协议，包括CC协议和商业协议两种
 | articles[*][license][type] | POST | 是 | 字符串 | 授权类型，值为'cc'或者'cm'，分别对应CC协议和商业协议 |
 | articles[*][license][content] | POST | 是 | 数组 | 授权方式具体参数 |
