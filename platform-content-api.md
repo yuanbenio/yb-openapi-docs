@@ -22,9 +22,9 @@ V1
 
 
 ## 内容获取接口
-> [ GET ] http://openapi.yuanben.io/v1/content/articles/{uuid} 
+> [ GET ] https://openapi.yuanben.io/v1/content/articles/{uuid} 
 
-> [ GET ] http://openapi.staging.yuanben.site/v1/content/articles/{uuid} (测试线)
+> [ GET ] https://openapi.staging.yuanben.site/v1/content/articles/{uuid} (测试线)
 
 ### 参数列表
 | 参数名称 | 是否必填 | 数据类型 | 参数说明 |
@@ -62,7 +62,7 @@ V1
 
 ### 请求示例
 ```shell
-curl -v 'http://openapi.yuanben.io/v1/content/articles/9cc040eb-5631-435d-8c79-35f6cf1bce83?page=1&page_size=2' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciO...'
+curl -v 'https://openapi.yuanben.io/v1/content/articles/9cc040eb-5631-435d-8c79-35f6cf1bce83?page=1&page_size=2' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciO...'
 ```
 
 返回值
