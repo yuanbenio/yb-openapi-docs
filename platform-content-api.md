@@ -62,7 +62,7 @@ V1
 
 ### 请求示例
 ```shell
-curl -v 'http://openapi.yuanben.io/v1/content/articles/9cc040eb-5631-435d-8c79-35f6cf1bce83?page=1&page_size=10' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciO...'
+curl -v 'http://openapi.yuanben.io/v1/content/articles/9cc040eb-5631-435d-8c79-35f6cf1bce83?page=1&page_size=2' -H 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciO...'
 ```
 
 返回值
