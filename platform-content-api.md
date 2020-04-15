@@ -31,8 +31,8 @@ V1
 | --- | --- | --- | --- |
 |page|否|整型|内容分页数，从1开始|
 |page_size|否|整型|每页内容数量，默认20条，最大50条|
-|start_time|否|整型|内容发布的最早时间|
-|end_time|否|整型|内容发布的最晚时间|
+|start_time|否|整型|「原本」发布的最早时间|
+|end_time|否|整型|「原本」发布的最晚时间|
 
 ### 返回值
 
@@ -44,7 +44,7 @@ V1
 | status | 状态 |
 | status.code | 状态码 |
 | status.message | 状态消息 |
-| data | 内容 |
+| data | html格式的内容 |
 | data.name | 内容媒体名称 |
 | data.total | 本次API调用返回的内容总条数 |
 | data.articles | 内容数组 |
