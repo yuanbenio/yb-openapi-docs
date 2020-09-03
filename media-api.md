@@ -40,6 +40,8 @@ V1
 | articles[*][client_id] | POST | 是 | 整型 | 文章 ID
 | articles[*][title] | POST | 是 | 字符串 | 文章标题|
 | articles[*][content] | POST | 是 | HTML字符串 | 文章内容，如果文章内容和其他用户的已发布文章高度相似，则接口会返回错误 |
+| articles[*][writer] | POST | 否 | 字符串 | 记者名称|
+| articles[*][channel] | POST | 否 | 字符串 | 频道名称 |
 | articles[*][closed] | POST | 否 | 布尔型 | 文章是否对外开放，如果设置为true，文章则不对其他用户开放，默认为false |
 | articles[*][original_url] | POST | 否 | 字符串 | 文章原文发布地址，默认为空 |
 | articles[*][original_publish_time] | POST | 否 | 整型 | 文章原文发布时间戳，默认为空 |
@@ -84,9 +86,11 @@ V1
 curl -X POST \
   https://openapi.yuanben.io/v1/media/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
- -F 'articles[0][client_id]=文章ID' \
+  -F 'articles[0][client_id]=文章ID' \
   -F 'articles[0][title]=测试文章' \
   -F 'articles[0][content]=<p>一篇测试文章</p>' \
+  -F 'articles[0][writer]=明星记者' \
+  -F 'articles[0][channel]=原本频道' \
   -F 'articles[0][license][type]=cc' \
   -F 'articles[0][license][content][adaptation]=sa' \
   -F 'articles[0][license][content][commercial]=n'
@@ -99,7 +103,7 @@ curl -X POST \
   https://openapi.yuanben.io/v1/media/articles \
   -H 'authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...' \
   -H 'content-type: application/json' \
-  -d '{"articles":[{"client_id": 5,"title":"测试文章","content":"<p>一篇测试文章</p>","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
+  -d '{"articles":[{"client_id": 5,"title":"测试文章","content":"<p>一篇测试文章</p>","writer":"明星记者","channel":"原本频道","license":{"type":"cc","content":{"adaptation":"sa","commercial":"n"}}}]}'
 ```
 
 返回值
